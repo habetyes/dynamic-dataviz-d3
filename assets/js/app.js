@@ -58,7 +58,7 @@ function renderCircles(circlesGroup, newXScale, chosenXaxis){
     .duration(1000)
     .attr("cx", d => newXScale(d[chosenXAxis]));
     
-
+    
     return circlesGroup;
 }
 
@@ -82,7 +82,7 @@ function updateToolTip(chosenXAxis, circlesGroup){
     }
 
     var toolTip = d3.tip()
-    .attr("class", "d3-tip")
+    .attr("class", "tooltip")
     .offset([80, -60])
     .html(function(d) {
         return (`${d.abbr}<br>${label} ${d[chosenXAxis]}`);
@@ -118,6 +118,8 @@ d3.csv("assets/data/data.csv").then(function(stateData) {
     .domain([0, d3.max(stateData, d => d.smokes)])
     .range([height, 0]);
 
+    // var yLinearScale = yScale(stateData, chosenYAxis);
+
     var bottomAxis = d3.axisBottom(xLinearScale);
     var leftAxis = d3.axisLeft(yLinearScale);
 
@@ -125,6 +127,10 @@ d3.csv("assets/data/data.csv").then(function(stateData) {
     .classed("x-axis", true)
     .attr("transform", `translate(0, ${height})`)
     .call(bottomAxis);
+
+    // var yAxis = chartGroup.append("g")
+    // .classed("y-axis", true)
+    // .attr("transform", `translate(0, ${width})`)
 
     chartGroup.append("g")
     .call(leftAxis);
@@ -141,6 +147,7 @@ d3.csv("assets/data/data.csv").then(function(stateData) {
     .attr("class", "stateText")
     .attr("alignment-baseline", "central")
     .text(d => d.abbr)
+
 
 
     var circlesGroup = chartGroup.selectAll("circle")
