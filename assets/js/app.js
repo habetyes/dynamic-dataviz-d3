@@ -12,7 +12,7 @@ var margin = {
 var width = svgWidth - margin.left - margin.right;
 var height = svgHeight - margin.top - margin.bottom;
 
-var svg = d3.select(".chart").append("svg").attr("width", svgWidth).attr("height", svgHeight);
+var svg = d3.select("#chart").append("svg").attr("width", svgWidth).attr("height", svgHeight);
 
 var chartGroup = svg.append("g").attr("transform", `translate(${margin.left}, ${margin.top})`);
 
@@ -75,26 +75,26 @@ function renderCircleLabels(circleText, newXScale, chosenXaxis){
 // Update Tool Tip
 function updateToolTip(chosenXAxis, circlesGroup){
     if (chosenXAxis === "income"){
-        var label = "Income:";
+        var label = "Income: $";
     }
     else{
-        var label = "Obesity";
+        var label = "Obesity: ";
     }
 
     var toolTip = d3.tip()
     .attr("class", "tooltip")
     .offset([80, -60])
     .html(function(d) {
-        return (`${d.abbr}<br>${label} ${d[chosenXAxis]}`);
+        return (`${d.state}<br>${label}${d[chosenXAxis]} <br> Smokers: ${d.smokes}`);
     });
 
     circlesGroup.call(toolTip);
 
     circlesGroup.on("mouseover", function(data){
-        toolTip.show(data);
+        toolTip.show(data, this);
     })
     .on("mouseout", function(data, index){
-        toolTip.hide(data);
+        toolTip.hide(data, this);
     });
 
     return circlesGroup;
@@ -135,8 +135,6 @@ d3.csv("assets/data/data.csv").then(function(stateData) {
     chartGroup.append("g")
     .call(leftAxis);
 
-// -------------Attempt at populating state abbreviations in circles----------------------------
-
 // Create text labels for states overlayed on circles
     var circleText = chartGroup.selectAll("circle")
     .data(stateData)
@@ -150,6 +148,7 @@ d3.csv("assets/data/data.csv").then(function(stateData) {
 
 
 
+
     var circlesGroup = chartGroup.selectAll("circle")
     .data(stateData)
     .enter()
@@ -160,6 +159,8 @@ d3.csv("assets/data/data.csv").then(function(stateData) {
     .attr("fill", "blue")
     .attr("opacity", ".5")
     .attr("class", "stateCircle");
+
+    
 
     var labelsGroup = chartGroup.append("g")
     .attr("transform", `translate(${width/2}, ${height + 20})`);
